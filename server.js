@@ -114,13 +114,13 @@ app.post('/incoming-data-2', async (req, res) => {
                 conValues[0], // current_led_red
                 conValues[1], // current_led_green
                 conValues[2], // current_led_blue
-                conValues[3], // saved_sensor_red
-                conValues[4], // saved_sensor_green
-                conValues[5], // saved_sensor_blue
-                conValues[6], // saved_clear
-                conValues[7], // saved_color_temp
-                conValues[8], // saved_lux
-                conValues[9]  // act bool value
+                conValues[4], // saved_sensor_red
+                conValues[5], // saved_sensor_green
+                conValues[6], // saved_sensor_blue
+                conValues[7], // saved_clear
+                conValues[8], // saved_color_temp
+                conValues[9], // saved_lux
+                conValues[10]  // act bool value
             ]
         );
 
@@ -188,7 +188,7 @@ app.post('/post-data', async (req, res) => {
 
         const otherServerData = {
             'm2m:cin': {
-                'con': `${epoch},${red},${green},${blue}`
+                'con': `${epoch},${red},${green},${blue},1`
             }
         };
 
