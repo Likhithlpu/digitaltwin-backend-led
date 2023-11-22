@@ -108,7 +108,7 @@ app.post('/incoming-data-2', async (req, res) => {
 
         // Insert data into PostgreSQL database
         const result = await pool.query(
-            'INSERT INTO sensor_data_2 (timestamp, current_led_red, current_led_green, current_led_blue, saved_sensor_red, saved_sensor_green, saved_sensor_blue, saved_clear, saved_color_temp, saved_lux) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+            'INSERT INTO sensor_data_2 (timestamp, current_led_red, current_led_green, current_led_blue, saved_sensor_red, saved_sensor_green, saved_sensor_blue, saved_clear, saved_color_temp, saved_lux,act) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11) RETURNING *',
             [
                 formattedTimestamp,
                 conValues[0], // current_led_red
@@ -119,7 +119,8 @@ app.post('/incoming-data-2', async (req, res) => {
                 conValues[5], // saved_sensor_blue
                 conValues[6], // saved_clear
                 conValues[7], // saved_color_temp
-                conValues[8]  // saved_lux
+                conValues[8], // saved_lux
+                conValues[9]  // act bool value
             ]
         );
 
