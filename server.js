@@ -28,7 +28,7 @@ app.post('/incoming-data', async (req, res) => {
 
         // Log the "con" value
         const con = cin['con'];
-        console.log('Original con value:', con);
+        console.log('Original con value from /incoming-data:', con);
 
         // Parse the "con" values
 	const conValues = con
@@ -36,7 +36,7 @@ app.post('/incoming-data', async (req, res) => {
   	.split(',')
   	.map(value => parseInt(value.trim(), 10));
 
-        console.log('Parsed con values:', conValues);
+        console.log('Parsed con values /incoming-data:', conValues);
 
         // Check if any value is NaN, and handle it accordingly
         if (conValues.some(isNaN)) {
@@ -48,7 +48,7 @@ app.post('/incoming-data', async (req, res) => {
         date.setMinutes(date.getMinutes() + 660); // Add 5 hours and 30 minutes to the timestamp
         const formattedTimestamp = date.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
 
-        console.log('Formatted timestamp:', formattedTimestamp);
+        console.log('Formatted timestamp /incoming-data:', formattedTimestamp);
 
         // Insert data into PostgreSQL database
         const result = await pool.query(
@@ -67,10 +67,10 @@ app.post('/incoming-data', async (req, res) => {
             ]
         );
 
-        console.log('Data inserted successfully:', result.rows[0]);
-        res.status(200).send('Data received and inserted successfully.');
+        console.log('Data inserted successfully /incoming-data:', result.rows[0]);
+        res.status(200).send('Data received and inserted successfully. /incoming-data');
     } catch (error) {
-        console.error('Error inserting data into PostgreSQL:', error.message);
+        console.error('Error inserting data into PostgreSQL /incoming-data:', error.message);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -80,11 +80,11 @@ app.post('/incoming-data-2', async (req, res) => {
     try {
         // Extract data from the received JSON
         const cin = req.body['m2m:sgn']['m2m:nev']['m2m:rep']['m2m:cin'];
-        console.log('Received data:', JSON.stringify(cin, null, 2));
+        console.log('Received data /incoming-data-2:', JSON.stringify(cin, null, 2));
 
         // Log the "con" value
         const con = cin['con'];
-        console.log('Original con value:', con);
+        console.log('Original con value /incoming-data-2:', con);
 
         // Parse the "con" values
 	const conValues = con
@@ -92,7 +92,7 @@ app.post('/incoming-data-2', async (req, res) => {
   	.split(',')
   	.map(value => parseInt(value.trim(), 10));
 
-        console.log('Parsed con values:', conValues);
+        console.log('Parsed con values /incoming-data-2:', conValues);
 
         // Check if any value is NaN, and handle it accordingly
         if (conValues.some(isNaN)) {
@@ -104,7 +104,7 @@ app.post('/incoming-data-2', async (req, res) => {
         date.setMinutes(date.getMinutes() + 660); // Add 5 hours and 30 minutes to the timestamp
         const formattedTimestamp = date.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
 
-        console.log('Formatted timestamp:', formattedTimestamp);
+        console.log('Formatted timestamp /incoming-data-2:', formattedTimestamp);
 
         // Insert data into PostgreSQL database
         const result = await pool.query(
@@ -124,11 +124,11 @@ app.post('/incoming-data-2', async (req, res) => {
             ]
         );
 
-        console.log('Data inserted successfully:', result.rows[0]);
-        res.status(200).send('Data received and inserted successfully.');
+        console.log('Data inserted successfully /incoming-data-2:', result.rows[0]);
+        res.status(200).send('Data received and inserted successfully./incoming-data-2');
     } catch (error) {
-        console.error('Error inserting data into PostgreSQL:', error.message);
-        res.status(500).send('Internal Server Error');
+        console.error('Error inserting data into PostgreSQL /incoming-data-2:', error.message);
+        res.status(500).send('Internal Server Error /incoming-data-2');
     }
 });
 // Endpoint to get the latest data
@@ -140,8 +140,8 @@ app.get('/latest-data', async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.error('Error fetching latest data from PostgreSQL:', error.message);
-        res.status(500).send('Internal Server Error');
+        console.error('Error fetching latest data from PostgreSQL /latest-data:', error.message);
+        res.status(500).send('Internal Server Error /latest-data');
     }
 });
 
@@ -153,8 +153,8 @@ app.get('/latest-data-node2', async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.error('Error fetching latest data from PostgreSQL:', error.message);
-        res.status(500).send('Internal Server Error');
+        console.error('Error fetching latest data from PostgreSQL /latest-data-node2:', error.message);
+        res.status(500).send('Internal Server Error /latest-data-node2');
     }
 });
 
@@ -177,7 +177,7 @@ app.post('/post-data', async (req, res) => {
             [red, blue, green]
         );
 
-        console.log('Data inserted successfully:', result.rows[0]);
+        console.log('Data inserted successfully /post-data:', result.rows[0]);
 
         // Send the data to another server
         const otherServerUrl = 'http://192.168.0.109:8200/~/in-cse/in-name/AE-DT/DT-ACT-1/Data/';
@@ -200,8 +200,8 @@ app.post('/post-data', async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.error('Error inserting data into PostgreSQL or sending to another server:', error.message);
-        res.status(500).send('Internal Server Error');
+        console.error('Error inserting data into PostgreSQL or sending to another server /post-data:', error.message);
+        res.status(500).send('Internal Server Error /post-data');
     }
 });
 
