@@ -242,6 +242,7 @@ app.post('/sim-data-1', async (req, res) => {
                 conValues[3], // saved_sensor_red
                 conValues[4], // saved_sensor_green
                 conValues[5], // saved_sensor_blue
+                conValues[6]
             ]
         );
 
