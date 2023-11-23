@@ -188,7 +188,7 @@ app.post('/post-data', async (req, res) => {
 
         const otherServerData = {
             'm2m:cin': {
-                'con': `${epoch},${red},${green},${blue},1`
+                'con': `[${epoch},${red},${green},${blue},1]`
             }
         };
 
@@ -247,6 +247,48 @@ app.post('/sim-data-1', async (req, res) => {
         res.status(200).send('Data received and inserted successfully. /sim-data-1');
     } catch (error) {
         console.error('Error inserting data into PostgreSQL /sim-data-1:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/sim-data-2', async (req, res) => {
+    try {
+        // Extract data from the received JSON
+        const cin = req.body['m2m:sgn']['m2m:nev']['m2m:rep']['m2m:cin'];
+        console.log('Received data:', JSON.stringify(cin, null, 2));
+
+        // Log the "con" value
+        const con = cin['con'];
+        console.log('Original con value from /sim-data-2:', con);
+
+        // Parse the "con" values
+	const conValues = con
+  	.slice(1, -1) // Remove square brackets
+  	.split(',')
+  	.map(value => parseInt(value.trim(), 10));
+
+        console.log('Parsed con values /sim-data-2:', conValues);
+
+        // Check if any value is NaN, and handle it accordingly
+        if (conValues.some(isNaN)) {
+            throw new Error('Invalid con values. Please check the format.');
+        }
+
+        // Insert data into PostgreSQL database
+        const result = await pool.query(
+            'INSERT INTO sim_data_2 (sred, sgreen, sblue, sid) VALUES ($1, $2, $3, $4) RETURNING *',
+            [
+                conValues[0], // current_led_red
+                conValues[1], // current_led_green
+                conValues[2], // current_led_blue
+                conValues[3]
+            ]
+        );
+
+        console.log('Data inserted successfully /sim-data-2:', result.rows[0]);
+        res.status(200).send('Data received and inserted successfully. /sim-data-2');
+    } catch (error) {
+        console.error('Error inserting data into PostgreSQL /sim-data-2:', error.message);
         res.status(500).send('Internal Server Error');
     }
 });
