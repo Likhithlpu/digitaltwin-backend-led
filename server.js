@@ -206,6 +206,52 @@ app.post('/post-data', async (req, res) => {
 });
 
 
+app.post('/sim-data-1', async (req, res) => {
+    try {
+        // Extract data from the received JSON
+        const cin = req.body['m2m:sgn']['m2m:nev']['m2m:rep']['m2m:cin'];
+        console.log('Received data:', JSON.stringify(cin, null, 2));
+
+        // Log the "con" value
+        const con = cin['con'];
+        console.log('Original con value from /sim-data-1:', con);
+
+        // Parse the "con" values
+	const conValues = con
+  	.slice(1, -1) // Remove square brackets
+  	.split(',')
+  	.map(value => parseInt(value.trim(), 10));
+
+        console.log('Parsed con values /sim-data-1:', conValues);
+
+        // Check if any value is NaN, and handle it accordingly
+        if (conValues.some(isNaN)) {
+            throw new Error('Invalid con values. Please check the format.');
+        }
+
+
+        console.log('Formatted timestamp /incoming-data:', formattedTimestamp);
+
+        // Insert data into PostgreSQL database
+        const result = await pool.query(
+            'INSERT INTO sim_data_1 (red, green, blue, sred, sgreen, sblue, sid) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [
+                conValues[0], // current_led_red
+                conValues[1], // current_led_green
+                conValues[2], // current_led_blue
+                conValues[3], // saved_sensor_red
+                conValues[4], // saved_sensor_green
+                conValues[5], // saved_sensor_blue
+            ]
+        );
+
+        console.log('Data inserted successfully /sim-data-1:', result.rows[0]);
+        res.status(200).send('Data received and inserted successfully. /sim-data-1');
+    } catch (error) {
+        console.error('Error inserting data into PostgreSQL /sim-data-1:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 // Start the server
 app.listen(PORT, () => {
