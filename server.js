@@ -218,7 +218,7 @@ app.post('/sim-data-1', async (req, res) => {
 
         // Parse the "con" values
 	const conValues = con
-  	.slice(0, -1) // Remove square brackets
+  	.slice(1, -1) // Remove square brackets
   	.split(',')
   	.map(value => parseInt(value.trim(), 10));
 
