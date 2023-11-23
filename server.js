@@ -229,9 +229,6 @@ app.post('/sim-data-1', async (req, res) => {
             throw new Error('Invalid con values. Please check the format.');
         }
 
-
-        console.log('Formatted timestamp /incoming-data:', formattedTimestamp);
-
         // Insert data into PostgreSQL database
         const result = await pool.query(
             'INSERT INTO sim_data_1 (red, green, blue, sred, sgreen, sblue, sid) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
