@@ -188,7 +188,7 @@ app.post('/post-data', async (req, res) => {
 
         const otherServerData = {
             'm2m:cin': {
-                'con': `[${epoch},${red},${green},${blue},1]`
+                'con': `[${epoch},${red},${green},${blue}]`
             }
         };
 
