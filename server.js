@@ -19,7 +19,6 @@ const pool = new Pool({
     port: 5432,
 });
 
-// Endpoint to handle incoming data for node 1
 app.post('/incoming-data', async (req, res) => {
     try {
         // Extract data from the received JSON
@@ -33,8 +32,8 @@ app.post('/incoming-data', async (req, res) => {
         // Parse the "con" values
 	const conValues = con
   	.slice(1, -1) // Remove square brackets
-  	.split(',');
-  	// .map(value => parseInt(value.trim(), 10));
+  	.split(',')
+  	.map(value => parseInt(value.trim(), 10));
 
         console.log('Parsed con values /incoming-data:', conValues);
 
@@ -52,18 +51,18 @@ app.post('/incoming-data', async (req, res) => {
 
         // Insert data into PostgreSQL database
         const result = await pool.query(
-            'INSERT INTO "node1" (timestamp, temperature, uncompensated_TDS, compensated_TDS, voltage_TDS) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            'INSERT INTO sensor_data (timestamp, current_led_red, current_led_green, current_led_blue, saved_sensor_red, saved_sensor_green, saved_sensor_blue, saved_clear, saved_color_temp, saved_lux) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
             [
                 formattedTimestamp,
-                conValues[0], // Temperature
-                conValues[1], // Uncompensated_TDS
-                conValues[2], // Compensated_TDS
-                conValues[3], // Voltage_TDS
-                // conValues[4], // saved_sensor_green
-                // conValues[5], // saved_sensor_blue
-                // conValues[6], // saved_clear
-                // conValues[7], // saved_color_temp
-                // conValues[8]  // saved_lux
+                conValues[0], // current_led_red
+                conValues[1], // current_led_green
+                conValues[2], // current_led_blue
+                conValues[3], // saved_sensor_red
+                conValues[4], // saved_sensor_green
+                conValues[5], // saved_sensor_blue
+                conValues[6], // saved_clear
+                conValues[7], // saved_color_temp
+                conValues[8]  // saved_lux
             ]
         );
 
@@ -74,6 +73,62 @@ app.post('/incoming-data', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+// Endpoint to handle incoming data for node 1
+// app.post('/incoming-data', async (req, res) => {
+//     try {
+//         // Extract data from the received JSON
+//         const cin = req.body['m2m:sgn']['m2m:nev']['m2m:rep']['m2m:cin'];
+//         console.log('Received data:', JSON.stringify(cin, null, 2));
+
+//         // Log the "con" value
+//         const con = cin['con'];
+//         console.log('Original con value from /incoming-data:', con);
+
+//         // Parse the "con" values
+// 	const conValues = con
+//   	.slice(1, -1) // Remove square brackets
+//   	.split(',');
+//   	// .map(value => parseInt(value.trim(), 10));
+
+//         console.log('Parsed con values /incoming-data:', conValues);
+
+//         // Check if any value is NaN, and handle it accordingly
+//         if (conValues.some(isNaN)) {
+//             throw new Error('Invalid con values. Please check the format.');
+//         }
+
+//         const timestamp = cin['ct'].replace(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/, '$1-$2-$3T$4:$5:$6');
+//         const date = new Date(timestamp);
+//         date.setMinutes(date.getMinutes() + 660); // Add 5 hours and 30 minutes to the timestamp
+//         const formattedTimestamp = date.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+
+//         console.log('Formatted timestamp /incoming-data:', formattedTimestamp);
+
+//         // Insert data into PostgreSQL database
+//         const result = await pool.query(
+//             'INSERT INTO "node1" (timestamp, temperature, uncompensated_TDS, compensated_TDS, voltage_TDS) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+//             [
+//                 formattedTimestamp,
+//                 conValues[0], // Temperature
+//                 conValues[1], // Uncompensated_TDS
+//                 conValues[2], // Compensated_TDS
+//                 conValues[3], // Voltage_TDS
+//                 // conValues[4], // saved_sensor_green
+//                 // conValues[5], // saved_sensor_blue
+//                 // conValues[6], // saved_clear
+//                 // conValues[7], // saved_color_temp
+//                 // conValues[8]  // saved_lux
+//             ]
+//         );
+
+//         console.log('Data inserted successfully /incoming-data:', result.rows[0]);
+//         res.status(200).send('Data received and inserted successfully. /incoming-data');
+//     } catch (error) {
+//         console.error('Error inserting data into PostgreSQL /incoming-data:', error.message);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
 
 // Subscription for node 2
 app.post('/incoming-data2', async (req, res) => {
